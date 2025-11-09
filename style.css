@@ -1,0 +1,362 @@
+/* ----------------------------------- */
+/* 1. Global Reset और Typography */
+/* ----------------------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6; 
+    color: #333;
+    line-height: 1.6;
+}
+
+/* ----------------------------------- */
+/* 2. नेविगेशन बार (Header) */
+/* ----------------------------------- */
+.navbar {
+    background-color: #333;
+    color: white;
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #6a0dad; 
+}
+
+.navbar nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 25px;
+    padding: 5px 10px;
+    transition: color 0.3s;
+}
+
+.navbar nav a:hover {
+    color: #6a0dad;
+}
+
+.btn-login {
+    background-color: #6a0dad;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer; 
+    transition: background-color 0.3s;
+}
+
+.btn-login:hover {
+    background-color: #520a83;
+}
+
+.welcome-msg { 
+    color: #e0e0e0;
+    margin-right: 20px;
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+/* ----------------------------------- */
+/* 3. मुख्य कंटेनर और हेडिंग्स */
+/* ----------------------------------- */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+h1, h2 {
+    color: #6a0dad;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+p {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+
+/* ----------------------------------- */
+/* 4. मूड सेलेक्टर स्टाइलिंग (UPDATED) */
+/* ----------------------------------- */
+.mood-selector {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 30px;
+}
+
+.mood-options {
+    display: flex;
+    justify-content: center;
+    gap: 15px; 
+    flex-wrap: wrap; 
+}
+
+.mood-btn {
+    background-color: #ffffff; 
+    border: 1px solid #ddd;
+    border-radius: 12px; 
+    padding: 15px 25px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 130px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); 
+}
+
+.mood-btn:hover {
+    background-color: #fff0e6; 
+    border-color: #ff6a0d; 
+    transform: translateY(-5px) scale(1.05); 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); 
+}
+
+.mood-btn span:first-child { 
+    font-size: 2.8em;
+    margin-bottom: 8px;
+    color: #6a0dad; 
+}
+
+.mood-btn.active {
+    background-color: #6a0dad;
+    color: white;
+    border-color: #520a83;
+    transform: scale(1.08); 
+    box-shadow: 0 6px 15px rgba(106, 13, 173, 0.5); 
+    z-index: 10;
+}
+
+.mood-btn.active span:first-child {
+    color: white; 
+}
+
+/* UI/UX इफ़ेक्ट: जब कोई बटन एक्टिव हो तो बाकियों को डिम करना */
+.mood-dim {
+    opacity: 0.4;
+    pointer-events: none; 
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+
+/* ----------------------------------- */
+/* 5. सर्च एरिया स्टाइलिंग */
+/* ----------------------------------- */
+.search-area {
+    margin-bottom: 40px;
+    padding: 30px;
+    background-color: #f0f8ff; 
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+#searchForm {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+    gap: 10px;
+}
+
+#searchInput {
+    flex-grow: 1;
+    padding: 12px;
+    border: 2px solid #6a0dad;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.search-btn {
+    width: auto;
+    padding: 12px 25px;
+}
+
+/* ----------------------------------- */
+/* 6. प्लेलिस्ट एरिया */
+/* ----------------------------------- */
+#playlist-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    min-height: 250px; 
+}
+
+#playlist-container p {
+    color: #999;
+}
+
+.youtube-embed-wrapper {
+    text-align: left;
+    margin-top: 20px;
+}
+.youtube-embed-wrapper h3 {
+    text-align: left;
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #6a0dad;
+    padding-bottom: 5px;
+}
+iframe {
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+/* ----------------------------------- */
+/* 7. ऑथेंटिकेशन मॉडल स्टाइलिंग (No Change) */
+/* ----------------------------------- */
+
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7); 
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto; 
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: fadeIn 0.3s; 
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: #333;
+}
+
+.auth-form {
+    display: none; 
+}
+
+.auth-form.active-form {
+    display: block; 
+}
+
+.auth-form h2 {
+    color: #6a0dad;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.submit-btn {
+    background-color: #6a0dad;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #520a83;
+}
+
+.switch-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+.switch-link a {
+    color: #6a0dad;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* ----------------------------------- */
+/* 8. Toast/Success Message Style (No Change) */
+/* ----------------------------------- */
+.toast-message {
+    visibility: hidden; 
+    min-width: 250px;
+    background-color: #5cb85c; 
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed; 
+    z-index: 2000;
+    left: 50%; 
+    bottom: 50px; 
+    transform: translateX(-50%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-size: 1.1em;
+    opacity: 0;
+    transition: opacity 0.5s, bottom 0.5s;
+}
+
+.toast-message.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 80px; 
+}
