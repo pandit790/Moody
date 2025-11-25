@@ -1,2 +1,6 @@
 [build]
 root = "Server"
+builder = "NIXPACKS"
+
+[deploy]
+start = "npm start"
