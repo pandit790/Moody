@@ -2,9 +2,13 @@
 const yts = require("yt-search");
 const NodeCache = require("node-cache");
 const pLimit = require("p-limit").default;
-const ytdlp = require("yt-dlp-exec").create({
-  binary: 'yt-dlp'
-});
+const { create } = require("yt-dlp-exec");
+
+const ytdlp = process.platform === "win32"
+  ? create("yt-dlp.exe")   // windows packaged exe
+  : create("yt-dlp");       // linux global binary
+
+
 const axios = require("axios");
 
 const cache = new NodeCache({ stdTTL: 60 * 5 });
