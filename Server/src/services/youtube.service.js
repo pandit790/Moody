@@ -2,7 +2,9 @@
 const yts = require("yt-search");
 const NodeCache = require("node-cache");
 const pLimit = require("p-limit").default;
-const ytdlp = require("yt-dlp-exec"); // ✔ pure Node version (no Python)
+const ytdlp = require("yt-dlp-exec").create({
+  binary: 'yt-dlp'
+});
 const axios = require("axios");
 
 const cache = new NodeCache({ stdTTL: 60 * 5 });
