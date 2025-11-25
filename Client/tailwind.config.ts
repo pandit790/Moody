@@ -1,8 +1,8 @@
-import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
-export default {
+const config = {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: ["./src/**/*.{js,jsx}"],
   prefix: "",
   theme: {
     container: {
@@ -61,6 +61,7 @@ export default {
         'gradient-relaxed': 'var(--gradient-relaxed)',
         'gradient-focused': 'var(--gradient-focused)',
         'gradient-romantic': 'var(--gradient-romantic)',
+        'gradient-angry': 'var(--gradient-angry)',
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -88,8 +89,11 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "spin-slow": "spin 8s linear infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+  plugins: [tailwindcssAnimate],
+};
+
+export default config;

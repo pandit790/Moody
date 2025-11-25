@@ -45,6 +45,7 @@ All colors MUST be HSL.
     --gradient-relaxed: linear-gradient(135deg, hsl(160 70% 45%) 0%, hsl(180 60% 50%) 100%);
     --gradient-focused: linear-gradient(135deg, hsl(200 80% 50%) 0%, hsl(220 70% 55%) 100%);
     --gradient-romantic: linear-gradient(135deg, hsl(340 75% 55%) 0%, hsl(320 65% 60%) 100%);
+    --gradient-angry: linear-gradient(135deg, hsl(5 85% 55%) 0%, hsl(350 80% 50%) 100%);
 
     /* Chat bubbles */
     --bubble-user: 142 76% 36%;
