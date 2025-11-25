@@ -1,16 +1,16 @@
 // src/services/youtube.service.js
-const { spawn } = require("child_process");
 const yts = require("yt-search");
-const axios = require("axios");
 const NodeCache = require("node-cache");
 const pLimit = require("p-limit").default;
+const ytdlp = require("yt-dlp-exec"); // ✔ pure Node version (no Python)
+const axios = require("axios");
 
-const cache = new NodeCache({ stdTTL: 60 * 5 }); // 5 min cache
+const cache = new NodeCache({ stdTTL: 60 * 5 });
 const CONCURRENCY = 3;
-const limiter = pLimit(CONCURRENCY); // ✔ Works
+const limiter = pLimit(CONCURRENCY);
 
 /**
- * Search Youtube for a query and return the first videoId (or null)
+ * Search Youtube for a query and return first videoId
  */
 async function searchYoutubeTrack(query) {
   const key = `search:${query.toLowerCase()}`;
@@ -19,114 +19,80 @@ async function searchYoutubeTrack(query) {
 
   try {
     const r = await yts(query);
-    const first = r?.videos && r.videos.length > 0 ? r.videos[0] : null;
+    const first = r?.videos?.[0] ?? null;
     if (!first) return null;
+
     cache.set(key, first.videoId);
     return first.videoId;
   } catch (err) {
-    console.error("[youtube.service] search error:", err?.message || err);
+    console.error("[youtube.service] search error:", err.message);
     return null;
   }
 }
 
 /**
- * Use yt-dlp to fetch JSON metadata including audio URL.
- * Returns object { url, title, duration, thumbnail, ext, abr } or null
- * Runs under concurrency limiter to avoid spamming the server.
+ * Safely extract audio using yt-dlp-exec
  */
 async function getYoutubeAudio(videoUrl) {
-  // limiter avoids spawning too many yt-dlp at once
-  return limiter(() => _getYoutubeAudio(videoUrl));
-}
-
-function _getYoutubeAudio(videoUrl) {
-  return new Promise((resolve, reject) => {
+  return limiter(async () => {
     try {
-      // cached by videoUrl
       const key = `audio:${videoUrl}`;
       const cached = cache.get(key);
-      if (cached) return resolve(cached);
+      if (cached) return cached;
 
-      // spawn yt-dlp --dump-json -f bestaudio
-      const args = [
-        "-f",
-        "bestaudio",
-        "--no-playlist",
-        "--dump-json",
-        videoUrl,
-      ];
-      const runner = spawn("yt-dlp", args, { windowsHide: true });
-
-      let out = "";
-      let errOut = "";
-
-      runner.stdout.on("data", (c) => (out += c.toString()));
-      runner.stderr.on("data", (c) => (errOut += c.toString()));
-
-      runner.on("close", (code) => {
-        if (code !== 0) {
-          console.error("[youtube.service] yt-dlp stderr:", errOut);
-          return reject(
-            new Error("yt-dlp failed: " + (errOut || "exit " + code))
-          );
-        }
-        try {
-          const json = JSON.parse(out);
-          // Try common fields to get a direct audio URL
-          const url =
-            json.url ||
-            (json.requested_formats &&
-              json.requested_formats[0] &&
-              json.requested_formats[0].url) ||
-            (json.formats &&
-              json.formats.find((f) => f.height === null && f.abr)?.url) ||
-            (json.formats && json.formats[0] && json.formats[0].url) ||
-            null;
-
-          const result = {
-            url,
-            title: json.title || null,
-            duration: json.duration || null,
-            thumbnail: json.thumbnail || null,
-            ext: json.ext || null,
-            abr:
-              json.abr ||
-              (json.requested_formats &&
-                json.requested_formats[0] &&
-                json.requested_formats[0].abr) ||
-              null,
-          };
-
-          cache.set(key, result, 60 * 5); // cache 5 minutes
-          return resolve(result);
-        } catch (err) {
-          console.error("[youtube.service] parse error:", err, "raw:", out);
-          return reject(err);
-        }
+      // fetch direct stream metadata, no conversion
+      const json = await ytdlp(videoUrl, {
+        dumpSingleJson: true,
+        noCheckCertificates: true,
+        noWarnings: true,
+        format: "bestaudio"
       });
-    } catch (err) {
-      return reject(err);
+
+      // Find the best direct audio URL
+      const format =
+        json?.requested_formats?.find((f) => f.acodec !== "none") ||
+        json?.formats?.find((f) => f.acodec !== "none");
+
+      const url = format?.url;
+
+      const result = {
+        url,
+        title: json.title,
+        duration: json.duration,
+        thumbnail: json.thumbnail,
+        ext: format?.ext,
+        abr: format?.abr,
+      };
+
+      cache.set(key, result, 60 * 5);
+      return result;
+    } catch (error) {
+      console.error("[youtube.service] yt-dlp-exec error:", error);
+      return null;
     }
   });
 }
 
 /**
- * Optionally, stream proxied audio to the client (via axios streaming).
- * We first fetch the direct audio URL with getYoutubeAudio() then stream it.
+ * Proxy streaming through server
  */
 async function proxyAudioStream(res, audioUrl) {
-  // stream audio to response
-  const resp = await axios.get(audioUrl, {
-    responseType: "stream",
-    timeout: 30000,
-  });
-  // set headers (some audio types)
-  if (resp.headers["content-type"])
-    res.setHeader("Content-Type", resp.headers["content-type"]);
-  if (resp.headers["content-length"])
-    res.setHeader("Content-Length", resp.headers["content-length"]);
-  // forward caching headers? skip for now
-  resp.data.pipe(res);
+  try {
+    const response = await axios.get(audioUrl, {
+      responseType: "stream",
+      timeout: 30000,
+    });
+
+    if (response.headers["content-type"])
+      res.setHeader("Content-Type", response.headers["content-type"]);
+    if (response.headers["content-length"])
+      res.setHeader("Content-Length", response.headers["content-length"]);
+
+    response.data.pipe(res);
+  } catch (err) {
+    console.error("[youtube.service] proxy stream failed:", err.message);
+    res.status(500).json({ error: "Proxy stream failed" });
+  }
 }
 
 module.exports = {
