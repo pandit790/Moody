@@ -1,0 +1,21 @@
+FROM node:20-slim
+
+# Install dependencies for yt-dlp
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip ffmpeg && \
+    pip3 install --no-cache-dir yt-dlp
+
+# Create app directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+RUN npm install --production
+
+# Copy rest of the source
+COPY . .
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
