@@ -1,6 +1,12 @@
 [build]
-root = "Server"
 builder = "NIXPACKS"
+root = "Server"
 
-[deploy]
-start = "npm start"
+[phases.install]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = []
+
+[start]
+cmd = "npm start"
